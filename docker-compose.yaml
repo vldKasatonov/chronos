@@ -12,6 +12,9 @@ services:
     environment:
       - PORT=3000
       - CLIENT_BASE_URL=http://localhost:5000
+    depends_on:
+      mongo:
+        condition: service_healthy
 
   client:
     build:
@@ -21,3 +24,24 @@ services:
     restart: unless-stopped
     ports:
       - "5000:5000"
+
+  mongo:
+    image: mongo:9.0-resolute
+    profiles: [prod]
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: chronos
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand({ ping: 1 })"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:
