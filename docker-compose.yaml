@@ -1,0 +1,23 @@
+name: chronos
+
+services:
+  api:
+    build:
+      context: api
+      target: runner
+    profiles: [prod]
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - CLIENT_BASE_URL=http://localhost:5000
+
+  client:
+    build:
+      context: client
+      target: runner
+    profiles: [prod]
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
