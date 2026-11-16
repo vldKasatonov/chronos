@@ -39,9 +39,66 @@ services:
       - mongo_data:/data/db
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand({ ping: 1 })"]
-      interval: 15s
+      interval: 1m
       timeout: 5s
-      retries: 5
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+
+  api-dev:
+    build:
+      context: api
+      dockerfile: Dockerfile.dev
+    profiles: [dev]
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - CLIENT_BASE_URL=http://localhost:5000
+    depends_on:
+      mongo-dev:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync
+          path: ./api
+          target: /app
+
+  client-dev:
+    build:
+      context: client
+      dockerfile: Dockerfile.dev
+    profiles: [dev]
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    develop:
+      watch:
+        - action: sync
+          path: ./client
+          target: /app
+
+  mongo-dev:
+    image: mongo:9.0-resolute
+    profiles: [dev]
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: chronos
+    volumes:
+      - mongo_dev_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand({ ping: 1 })"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
 
 volumes:
   mongo_data:
+  mongo_dev_data:
