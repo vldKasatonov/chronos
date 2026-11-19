@@ -1,19 +1,24 @@
 .button {
-    padding: 12px;
+    align-self: center;
+    min-width: 128px;
+    margin-top: var(--space-s);
+    padding: 10px var(--space-xl);
     font-size: 1rem;
+    font-weight: 600;
     color: #ffffff;
-    background: var(--color-primary);
+    background: var(--color-primary-dark);
     border: 0;
-    border-radius: var(--radius);
+    border-radius: var(--radius-pill);
     cursor: pointer;
+    transition: filter 0.2s ease;
 }
 
-.button:hover {
-    filter: brightness(1.1);
+.button:hover:not(:disabled) {
+    filter: brightness(1.08);
 }
 
 .button:focus-visible {
-    outline: 2px solid var(--color-text);
+    outline: 2px solid var(--color-text-dark);
     outline-offset: 2px;
 }
 
