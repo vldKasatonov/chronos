@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../api/auth';
+import AuthLayout from '../components/AuthLayout';
+import Input from '../components/Input';
+import Button from '../components/Button';
 
-const EMAIL_REGEX = /^\S+@\S+\.\S+$/; // move to vaidation utils if needed
-const MIN_PASSWORD_LENGTH = 6; //  move to validation utils if needed
+const EMAIL_REGEX = /^\S+@\S+\.\S+$/; // move to validation utils if needed
+const MIN_PASSWORD_LENGTH = 6; // move to validation utils if needed
 
 export default function Register() {
     const [formData, setFormData] = useState({
+        fullName: '',
         login: '',
         email: '',
         password: '',
@@ -24,9 +28,12 @@ export default function Register() {
 
     const validate = () => {
         const newErrors = {};
-        
+
+        if (!formData.fullName.trim()) {
+            newErrors.fullName = 'Full name is required';
+        }
         if (!formData.login.trim()) {
-            newErrors.login = 'Login is required';
+            newErrors.login = 'Username is required';
         }
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required';
@@ -60,6 +67,7 @@ export default function Register() {
         const { confirmPassword, ...rest } = formData;
         const payload = {
             ...rest,
+            fullName: rest.fullName.trim(),
             login: rest.login.trim(),
             email: rest.email.trim(),
         };
@@ -69,87 +77,77 @@ export default function Register() {
             await register(payload);
             navigate('/login');
         } catch (err) {
-            setServerError(err.response?.data?.message || 'Registration failed. Please try again.');
+            setServerError(
+                err.response?.data?.message || 'Registration failed. Please try again.'
+            );
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} noValidate>
-            <h1>Register</h1>
-
-            <div>
-                <label htmlFor="login">Login</label>
-                <input
-                    id="login"
+        <AuthLayout
+            title="Registration"
+            footer={
+                <>
+                    Have an account? <Link to="/login">Login</Link>
+                </>
+            }
+        >
+            <form className="auth-form" onSubmit={handleSubmit} noValidate>
+                <Input
+                    label="Full name:"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    error={errors.fullName}
+                    autoComplete="name"
+                    placeholder="Your Name"
+                />
+                <Input
+                    label="Username:"
                     name="login"
-                    type="text"
                     value={formData.login}
                     onChange={handleChange}
+                    error={errors.login}
                     autoComplete="username"
-                    aria-invalid={Boolean(errors.login)}
-                    aria-describedby={errors.login ? 'login-error' : undefined}
+                    placeholder="username"
                 />
-                {errors.login && <span id="login-error" role="alert">{errors.login}</span>}
-            </div>
-
-            <div>
-                <label htmlFor="email">Email</label>
-                <input
-                    id="email"
+                <Input
+                    label="Email:"
                     name="email"
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
+                    error={errors.email}
                     autoComplete="email"
-                    aria-invalid={Boolean(errors.email)}
-                    aria-describedby={errors.email ? 'email-error' : undefined}
+                    placeholder="email@example.com"
                 />
-                {errors.email && <span id="email-error" role="alert">{errors.email}</span>}
-            </div>
-
-            <div>
-                <label htmlFor="password">Password</label>
-                <input
-                    id="password"
+                <Input
+                    label="Password:"
                     name="password"
                     type="password"
                     value={formData.password}
                     onChange={handleChange}
+                    error={errors.password}
                     autoComplete="new-password"
-                    aria-invalid={Boolean(errors.password)}
-                    aria-describedby={errors.password ? 'password-error' : undefined}
+                    placeholder="Enter your password"
                 />
-                {errors.password && <span id="password-error" role="alert">{errors.password}</span>}
-            </div>
-
-            <div>
-                <label htmlFor="confirmPassword">Confirm password</label>
-                <input
-                    id="confirmPassword"
+                <Input
+                    label="Password confirmation:"
                     name="confirmPassword"
                     type="password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
+                    error={errors.confirmPassword}
                     autoComplete="new-password"
-                    aria-invalid={Boolean(errors.confirmPassword)}
-                    aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
+                    placeholder="Repeat your password"
                 />
-                {errors.confirmPassword && (
-                    <span id="confirmPassword-error" role="alert">{errors.confirmPassword}</span>
-                )}
-            </div>
 
-            {serverError && <p role="alert">{serverError}</p>}
+                {serverError && <p className="auth-error" role="alert">{serverError}</p>}
 
-            <button type="submit" disabled={loading}>
-                {loading ? 'Registering...' : 'Register'}
-            </button>
-
-            <p>
-                Already have an account? <Link to="/login">Login</Link>
-            </p>
-        </form>
+                <Button loading={loading} loadingText="Registering...">Sign up</Button>
+            </form>
+        </AuthLayout>
     );
 }
