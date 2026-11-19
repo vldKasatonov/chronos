@@ -1,4 +1,24 @@
+:root {
+  --color-bg: #C4F6FD;
+  --color-surface: #ffffff;
+  --color-text: #6596F3;
+  --color-primary: #6596F3;
+  --color-error: #c62828;
+  --radius: 100px;
+  --space-s: 8px;
+  --space-m: 16px;
+  --space-l: 24px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  background: #5da7cd;
+  font-family: system-ui, sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
 }
