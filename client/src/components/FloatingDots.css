@@ -1,0 +1,49 @@
+.floating-dots {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.floating-dot {
+    position: absolute;
+    bottom: -20px;
+    left: var(--left);
+    width: var(--size);
+    height: var(--size);
+    background: var(--color);
+    border-radius: 50%;
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: dot-rise var(--duration) linear var(--delay) infinite;
+}
+
+@keyframes dot-rise {
+    0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 0;
+    }
+    10% {
+        opacity: var(--peak);
+    }
+    100% {
+        transform: translate3d(var(--drift), -115vh, 0);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .floating-dot:nth-child(n + 21) {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floating-dot {
+        top: var(--top);
+        bottom: auto;
+        opacity: 0.35;
+        animation: none;
+    }
+}
