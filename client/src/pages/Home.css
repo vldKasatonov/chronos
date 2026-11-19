@@ -1,0 +1,17 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-l);
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--space-m);
+    text-align: center;
+}
+
+.home-title {
+    margin: 0;
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+    font-weight: 700;
+}
