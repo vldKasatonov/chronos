@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../api/auth';
+import AuthLayout from '../components/AuthLayout';
+import Input from '../components/Input';
+import Button from '../components/Button';
 
 export default function Login() {
     const [formData, setFormData] = useState({ identifier: '', password: '' });
@@ -17,7 +20,7 @@ export default function Login() {
     const validate = () => {
         const newErrors = {};
         if (!formData.identifier.trim()) {
-            newErrors.identifier = 'Identifier is required';
+            newErrors.identifier = 'Login or email is required';
         }
         if (!formData.password) {
             newErrors.password = 'Password is required';
@@ -35,10 +38,10 @@ export default function Login() {
         }
 
         setServerError('');
-        
+
         try {
             setLoading(true);
-            await login(formData);
+            await login({ ...formData, identifier: formData.identifier.trim() });
             navigate('/');
         } catch (err) {
             setServerError(
@@ -50,56 +53,39 @@ export default function Login() {
     };
 
     return (
-        <form onSubmit={handleSubmit} noValidate>
-            <h1>Login</h1>
-
-            <div>
-                <label htmlFor="identifier">Username or email</label>
-                <input
-                    id="identifier"
+        <AuthLayout
+            title="Login"
+            footer={
+                <>
+                    Don&apos;t have an account? <Link to="/register">Sign up</Link>
+                </>
+            }
+        >
+            <form className="auth-form" onSubmit={handleSubmit} noValidate>
+                <Input
+                    label="Login or Email:"
                     name="identifier"
-                    type="text"
                     value={formData.identifier}
                     onChange={handleChange}
+                    error={errors.identifier}
                     autoComplete="username"
-                    aria-invalid={Boolean(errors.identifier)}
-                    aria-describedby={errors.identifier ? 'identifier-error' : undefined}
+                    placeholder="your login or email"
                 />
-                {errors.identifier && (
-                    <p id="identifier-error" role="alert">
-                        {errors.identifier}
-                    </p>
-                )}
-            </div>
-
-            <div>
-                <label htmlFor="password">Password</label>
-                <input
-                    id="password"
+                <Input
+                    label="Password:"
                     name="password"
                     type="password"
                     value={formData.password}
                     onChange={handleChange}
+                    error={errors.password}
                     autoComplete="current-password"
-                    aria-invalid={Boolean(errors.password)}
-                    aria-describedby={errors.password ? 'password-error' : undefined}
+                    placeholder="Enter your password"
                 />
-                {errors.password && (
-                    <p id="password-error" role="alert">
-                        {errors.password}
-                    </p>
-                )}
-            </div>
 
-            {serverError && <p role="alert">{serverError}</p>}
+                {serverError && <p className="auth-error" role="alert">{serverError}</p>}
 
-            <button type="submit" disabled={loading}>
-                {loading ? 'Logging in...' : 'Login'}
-            </button>
-
-            <p>
-                Don't have an account? <Link to="/register">Register</Link>
-            </p>
-        </form>
+                <Button loading={loading} loadingText="Logging in...">Login</Button>
+            </form>
+        </AuthLayout>
     );
 }
