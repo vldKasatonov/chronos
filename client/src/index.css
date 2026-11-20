@@ -1,13 +1,33 @@
 :root {
+  /* palette */
   --color-bg: #C4F6FD;
   --color-surface: #ffffff;
-  --color-text: #6596F3;
-  --color-primary: #6596F3;
+  --color-primary: #6596F3; 
+  --color-primary-dark: #3A6FD8; 
+  --color-red: #F3000E;
+  --color-orange: #F25016;
+  --color-green: #83B366;
+  --color-purple: #D3A4EA;
+  --color-sand: #EAD094;
+  --color-ice: #B2DCE2;
+  --color-lime: #D7EAAC;
+
+  /* semantic */
+  --color-text: var(--color-primary-dark);
+  --color-text-dark: #2b2b2b;
+  --color-placeholder: #6b7280;
   --color-error: #c62828;
-  --radius: 100px;
+
+  /* shape and spacing */
+  --radius-pill: 999px;
+  --radius-card: 24px;
+  --space-xs: 4px;
   --space-s: 8px;
   --space-m: 16px;
   --space-l: 24px;
+  --space-xl: 32px;
+
+  --font-main: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 *,
@@ -16,9 +36,19 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
+  min-height: 100vh;
+  font-family: var(--font-main);
   color: var(--color-text);
   background: var(--color-bg);
+}
+
+button,
+input {
+  font: inherit;
 }
